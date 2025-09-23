@@ -3,6 +3,75 @@ package org.JavaBackendCourse;
 import java.util.Scanner;
 
 
+enum Operation {
+    ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION
+}
+
+class Operand {
+    protected int value;
+
+    Operand(String token) {
+        this.value = Integer.parseInt(token);
+    }
+}
+
+class Calculator {
+    protected Calculator(String mathExpression) {
+        String[] tokens = mathExpression.split(" ");
+        Operand operand1 = new Operand(tokens[0]);
+        Operand operand2 = new Operand(tokens[2]);
+        String stringOperator = tokens[1];
+        // валидируем данные
+        Operation operator = validateOperation(operand2.value, stringOperator);
+        // считаем и выводим
+        calculate(operand1, operand2, operator);
+    }
+
+    private Operation validateOperation(int operand2, String stringOperator) {
+        // проверяем на соответствие операциям
+        Operation operator;
+        switch (stringOperator) {
+            case "+":
+                operator = Operation.ADDITION;
+                break;
+            case "-":
+                operator = Operation.SUBTRACTION;
+                break;
+            case "*":
+                operator = Operation.MULTIPLICATION;
+                break;
+            case "/":
+                operator = Operation.DIVISION;
+                // проверяем что не делим на ноль
+                if (operand2 == 0) {
+                    throw new IllegalArgumentException("can't divide by 0");
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid operator: " + stringOperator);
+        }
+        // Возвращаем корректный оператор
+        return operator;
+    }
+
+    private void calculate(Operand operand1, Operand operand2, Operation operator) {
+        switch (operator) {
+            case ADDITION:
+                System.out.println("Result: " + (operand1.value + operand2.value));
+                break;
+            case SUBTRACTION:
+                System.out.println("Result: " + (operand1.value - operand2.value));
+                break;
+            case MULTIPLICATION:
+                System.out.println("Result: " + (operand1.value * operand2.value));
+                break;
+            case DIVISION:
+                System.out.println("Result: " + (operand1.value / (float) operand2.value));
+                break;
+        }
+    }
+}
+
 public class Main {
     public static void main(String[] args) {
         String exit = "exit";
@@ -15,7 +84,6 @@ public class Main {
                 mathExpression = in.nextLine();
                 // создаем класс калькулятор и валидируем полученные данные, если получаем ошибку то начинаем сначало
                 Calculator calculator = new Calculator(mathExpression);
-                calculator.calculate();
             } catch (Exception e) {
                 System.out.println("Error, " + e.getMessage());
             }
@@ -25,65 +93,3 @@ public class Main {
     }
 }
 
-class Calculator {
-    int num1;
-    int num2;
-    String operator;
-
-    public Calculator(String mathExpression) {
-        String[] tokens = mathExpression.split(" ");
-        this.num1 = Integer.parseInt(tokens[0]);
-        this.num2 = Integer.parseInt(tokens[2]);
-        this.operator = tokens[1];
-        // валидируем данные
-        validate(num2, operator);
-    }
-
-    public void validate(int num2, String operator) {
-        String matchOperation = "+-*/";
-        // проверяем на соответствие операциям
-        boolean contains = matchOperation.contains(operator);
-        if (!contains) { throw new IllegalArgumentException("Invalid operator: " + operator);}
-
-        // проверяем что не делим на ноль
-        if (operator.equals("/") && num2 == 0) { throw new IllegalArgumentException("can't divide by 0"); }
-    }
-
-    // проверям операцию и в зависимости от нее вызываем нужный метод
-    public void calculate() {
-        switch (operator) {
-            case "+":
-                addition(num1, num2);
-                break;
-            case "-":
-                subtraction(num1, num2);
-                break;
-            case "*":
-                multiplication(num1, num2);
-                break;
-            case "/":
-                division(num1, num2);
-                break;
-        }
-    }
-
-    // сложкение
-    public void addition(int num1, int num2) {
-        System.out.println("Result: " + (num1 + num2));
-    }
-
-    // вычитание
-    public void subtraction(int num1, int num2) {
-        System.out.println("Result: " + (num1 - num2));
-    }
-
-    // умножение
-    public void multiplication(int num1, int num2) {
-        System.out.println("Result: " + (num1 * num2));
-    }
-
-    // деление
-    public void division(int num1, int num2) {
-        System.out.println("Result: " + (num1 / (float) num2));
-    }
-}
