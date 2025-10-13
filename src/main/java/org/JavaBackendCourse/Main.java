@@ -74,6 +74,7 @@ class Calculator {
 
 public class Main {
     public static void main(String[] args) {
+        // для пул реквеста
         String exit = "exit";
         String mathExpression = "";
         // цикл для выполнения пока не получим команду "exit" от пользователя
